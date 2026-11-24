@@ -1,0 +1,324 @@
+# al-waqat-tv
+AL WAQAT TV-Arabic Televison Directory
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AL WAQAT TV | القنوات العربية</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #101522;
+  color: white;
+}
+
+header {
+  background: #080d18;
+  padding: 22px;
+  text-align: center;
+  border-bottom: 3px solid #e5ae35;
+}
+
+.logo {
+  color: #e5ae35;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+header p { color: #bbb; }
+
+nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: #172033;
+  padding: 14px;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  padding: 10px 16px;
+}
+
+nav a:hover { color: #e5ae35; }
+
+.hero {
+  text-align: center;
+  padding: 40px 15px;
+  background: linear-gradient(120deg,#172b48,#101522);
+}
+
+.hero h1 { color: #e5ae35; }
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+.search {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #39445b;
+  border-radius: 8px;
+  background: #202b40;
+  color: white;
+  font-size: 17px;
+  margin: 15px 0;
+}
+
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.categories button {
+  padding: 10px 16px;
+  background: #263650;
+  border: 1px solid #46536a;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.categories button:hover {
+  background: #a87920;
+}
+
+.player {
+  background: #05070b;
+  border: 2px solid #e5ae35;
+  border-radius: 10px;
+  padding: 30px 15px;
+  text-align: center;
+  margin: 25px 0;
+}
+
+.player video {
+  width: 100%;
+  max-height: 450px;
+  background: black;
+}
+
+.channel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(150px,1fr));
+  gap: 12px;
+}
+
+.channel {
+  background: #202b40;
+  border: 1px solid #39445b;
+  border-radius: 9px;
+  padding: 18px 10px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.channel:hover {
+  border-color: #e5ae35;
+  transform: translateY(-2px);
+}
+
+.channel strong {
+  display: block;
+  color: #e5ae35;
+  margin-bottom: 8px;
+}
+
+.channel small { color: #bbb; }
+
+footer {
+  background: #080d18;
+  text-align: center;
+  padding: 25px;
+  margin-top: 40px;
+  color: #aaa;
+}
+
+.hidden { display: none; }
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">AL WAQAT TV</div>
+  <p>عالم القنوات التلفزيونية العربية</p>
+</header>
+
+<nav>
+  <a href="#home">الرئيسية</a>
+  <a href="#channels">القنوات</a>
+  <a href="#player">مشاهدة</a>
+  <a href="#about">حول الموقع</a>
+</nav>
+
+<section class="hero" id="home">
+  <h1>مرحباً بكم في AL WAQAT TV</h1>
+  <p>دليلك لمشاهدة القنوات التلفزيونية العربية</p>
+</section>
+
+<main class="container">
+
+  <section id="player">
+    <h2>مشغل القنوات</h2>
+    <div class="player">
+      <h3 id="selected">اختر قناة من القائمة</h3>
+      <video id="tvPlayer" controls playsinline></video>
+      <p id="playerMessage">
+        لم يتم اختيار قناة بعد.
+      </p>
+    </div>
+  </section>
+
+  <section id="channels">
+    <h2>دليل القنوات التلفزيونية</h2>
+
+    <input
+      id="search"
+      class="search"
+      type="search"
+      placeholder="ابحث عن قناة..."
+    >
+
+    <div class="categories">
+      <button onclick="filterCategory('الكل')">جميع القنوات</button>
+      <button onclick="filterCategory('أخبار')">أخبار</button>
+      <button onclick="filterCategory('رياضة')">رياضة</button>
+      <button onclick="filterCategory('ترفيه')">ترفيه</button>
+      <button onclick="filterCategory('أطفال')">أطفال</button>
+      <button onclick="filterCategory('مسلسلات')">مسلسلات</button>
+    </div>
+
+    <p id="count"></p>
+    <div class="channel-grid" id="channelGrid"></div>
+  </section>
+
+  <section id="about">
+    <h2>حول AL WAQAT TV</h2>
+    <p>
+      AL WAQAT TV هو مشروع دليل للقنوات التلفزيونية
+      العربية، يهدف إلى تنظيم القنوات في مكان واحد.
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  <p>© 2026 AL WAQAT TV. All rights reserved.</p>
+  <p>مشروع دليل القنوات العربية</p>
+</footer>
+
+<script>
+
+// Create 1,100 channel listing slots
+const channels = [];
+
+for (let i = 1; i <= 1100; i++) {
+  channels.push({
+    id: i,
+    name: `قناة ${i}`,
+    category: "غير مصنف",
+    stream: ""
+  });
+}
+
+// Add your authorized channels here.
+// Example:
+// channels[0].name = "اسم القناة";
+// channels[0].category = "أخبار";
+// channels[0].stream = "YOUR_AUTHORIZED_STREAM_URL";
+
+const grid = document.getElementById("channelGrid");
+const search = document.getElementById("search");
+
+let currentCategory = "الكل";
+
+function displayChannels() {
+  grid.innerHTML = "";
+
+  const term = search.value.trim().toLowerCase();
+
+  const filtered = channels.filter(channel => {
+    const matchesSearch =
+      channel.name.toLowerCase().includes(term);
+
+    const matchesCategory =
+      currentCategory === "الكل" ||
+      channel.category === currentCategory;
+
+    return matchesSearch && matchesCategory;
+  });
+
+  document.getElementById("count").textContent =
+    `عرض ${filtered.length} من ${channels.length} قناة`;
+
+  filtered.forEach(channel => {
+    const card = document.createElement("div");
+    card.className = "channel";
+
+    const name = document.createElement("strong");
+    name.textContent = channel.name;
+
+    const category = document.createElement("small");
+    category.textContent = channel.category;
+
+    card.appendChild(name);
+    card.appendChild(category);
+
+    card.addEventListener("click", () => {
+      selectChannel(channel);
+    });
+
+    grid.appendChild(card);
+  });
+}
+
+function filterCategory(category) {
+  currentCategory = category;
+  displayChannels();
+}
+
+function selectChannel(channel) {
+  document.getElementById("selected").textContent =
+    channel.name;
+
+  const player = document.getElementById("tvPlayer");
+  const message = document.getElementById("playerMessage");
+
+  player.pause();
+  player.removeAttribute("src");
+  player.load();
+
+  if (channel.stream) {
+    player.src = channel.stream;
+    player.load();
+    message.textContent = "القناة جاهزة للتشغيل.";
+  } else {
+    message.textContent =
+      "هذه خانة قناة تجريبية. أضف رابط بث مصرحاً به لتشغيلها.";
+  }
+
+  document.getElementById("player").scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+search.addEventListener("input", displayChannels);
+
+displayChannels();
+
+</script>
+
+</body>
+</html>
